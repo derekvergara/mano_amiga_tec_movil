@@ -43,7 +43,7 @@ class CheckSession extends StatelessWidget {
 }
 
 /*void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();////manco en el fortnite
   final prefs = await SharedPreferences.getInstance();
   final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
