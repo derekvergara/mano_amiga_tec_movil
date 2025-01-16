@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
-import 'screens/start_screen.dart'; // Nueva pantalla de inicio
+import 'screens/start_screen.dart'; // Nueva pantalla de inicio diseñado por mi
 
 void main() {
   runApp(MyApp());
