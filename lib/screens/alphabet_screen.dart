@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-///////////////////////////////
 class AlphabetScreen extends StatelessWidget {
   final String title;
 
