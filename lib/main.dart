@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
-import 'screens/start_screen.dart'; // Nueva pantalla de inicio diseñado por mi
+import 'screens/start_screen.dart'; // Nueva pantalla de inicio
 
 void main() {
   runApp(MyApp());
@@ -43,7 +43,7 @@ class CheckSession extends StatelessWidget {
 }
 
 /*void main() async {
-  WidgetsFlutterBinding.ensureInitialized();////manco en el fortnite
+  WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
