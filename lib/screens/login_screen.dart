@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_application/screens/home_screen.dart';
+import 'package:mano_amiga_tec/screens/home_screen.dart';
 import '../services/usuario_service.dart';
 import '../models/usuario.dart';
 
