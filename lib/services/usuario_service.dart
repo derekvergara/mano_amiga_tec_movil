@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/usuario.dart';
 
 class UsuarioService {
-  final String baseUrl = "http://192.168.18.240:8080/api/usuario/listado";
+  final String baseUrl =
+      "https://creative-joy-production.up.railway.app/api/usuario/listado";
 
   Future<List<Usuario>> obtenerUsuarios() async {
     final url = Uri.parse(baseUrl);
@@ -17,7 +18,8 @@ class UsuarioService {
     }
   }
 
-  static const String _baseUrl = "http://192.168.18.240:8080/api/usuario";
+  static const String _baseUrl =
+      "https://creative-joy-production.up.railway.app/api/usuario";
 
   static Future<bool> register(String username, String password) async {
     final url = Uri.parse("$_baseUrl/IngresarUsuario");
