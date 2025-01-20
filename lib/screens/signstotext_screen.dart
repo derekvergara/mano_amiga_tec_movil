@@ -55,7 +55,12 @@ class _SignToTextScreenState extends State<SignToTextScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Traductor IA'),
+        title: Text('Traductor IA',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.white)),
+        backgroundColor: Colors.blueAccent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -73,7 +78,7 @@ class _SignToTextScreenState extends State<SignToTextScreen> {
                 : Center(
                     child: Icon(
                       Icons.camera_alt,
-                      size: 100,
+                      size: 75,
                       color: Colors.grey,
                     ),
                   ),
@@ -86,7 +91,10 @@ class _SignToTextScreenState extends State<SignToTextScreen> {
               children: [
                 Text(
                   'Señas traducidas a texto',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent),
                 ),
                 SizedBox(height: 8),
                 TextField(
@@ -115,7 +123,8 @@ class _SignToTextScreenState extends State<SignToTextScreen> {
                 ElevatedButton(
                   onPressed: clearText,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.blueAccent,
+                    iconColor: Colors.white,
                   ),
                   child: Text('Limpiar'),
                 ),
