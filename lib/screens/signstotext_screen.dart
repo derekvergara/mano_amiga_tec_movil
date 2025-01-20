@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
 class SignToTextScreen extends StatefulWidget {
+  const SignToTextScreen({super.key});
+
   @override
   _SignToTextScreenState createState() => _SignToTextScreenState();
 }
