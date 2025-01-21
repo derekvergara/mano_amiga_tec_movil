@@ -8,27 +8,59 @@ class SignToTextScreen extends StatefulWidget {
   _SignToTextScreenState createState() => _SignToTextScreenState();
 }
 
-class _SignToTextScreenState extends State<SignToTextScreen> {
+class _SignToTextScreenState extends State<SignToTextScreen>
+    with WidgetsBindingObserver {
   late CameraController _cameraController;
+  bool isCameraInitialized = false;
   String translatedText = "";
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     initializeCamera();
   }
 
   void initializeCamera() async {
     final cameras = await availableCameras();
-    _cameraController = CameraController(cameras[0], ResolutionPreset.medium);
-    await _cameraController.initialize();
-    setState(() {});
+    _cameraController = CameraController(
+      cameras[0], // Usa la cámara trasera
+      ResolutionPreset.medium,
+      enableAudio: false,
+    );
+
+    // Escucha los cambios en la orientación del dispositivo
+    _cameraController.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
+    try {
+      await _cameraController.initialize();
+      setState(() {
+        isCameraInitialized = true;
+      });
+    } catch (e) {
+      print('Error al inicializar la cámara: $e');
+    }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _cameraController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      _cameraController.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      initializeCamera();
+    }
   }
 
   void translateSignLanguage() {
@@ -55,11 +87,11 @@ class _SignToTextScreenState extends State<SignToTextScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Traductor IA',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.white)),
+        title: Text(
+          'Traductor IA',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+        ),
         backgroundColor: Colors.blueAccent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -70,11 +102,14 @@ class _SignToTextScreenState extends State<SignToTextScreen> {
       ),
       body: Column(
         children: [
-          // Vista de la cámara o ícono de cámara si no está inicializada
+          // Vista de la cámara con orientación dinámica
           Expanded(
             flex: 3,
-            child: _cameraController.value.isInitialized
-                ? CameraPreview(_cameraController)
+            child: isCameraInitialized
+                ? AspectRatio(
+                    aspectRatio: _cameraController.value.aspectRatio,
+                    child: CameraPreview(_cameraController),
+                  )
                 : Center(
                     child: Icon(
                       Icons.camera_alt,
