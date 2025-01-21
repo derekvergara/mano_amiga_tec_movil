@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class SignToTextScreen extends StatefulWidget {
   const SignToTextScreen({super.key});
@@ -13,12 +14,14 @@ class _SignToTextScreenState extends State<SignToTextScreen>
   late CameraController _cameraController;
   bool isCameraInitialized = false;
   String translatedText = "";
+  final FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     initializeCamera();
+    _initTts();
   }
 
   void initializeCamera() async {
@@ -41,10 +44,17 @@ class _SignToTextScreenState extends State<SignToTextScreen>
     }
   }
 
+  void _initTts() {
+    flutterTts.setLanguage("es-ES");
+    flutterTts.setPitch(1.0);
+    flutterTts.setSpeechRate(0.5);
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _cameraController.dispose();
+    flutterTts.stop();
     super.dispose();
   }
 
@@ -76,6 +86,12 @@ class _SignToTextScreenState extends State<SignToTextScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Texto guardado: $translatedText")),
     );
+  }
+
+  void speakText() {
+    if (translatedText.isNotEmpty) {
+      flutterTts.speak(translatedText);
+    }
   }
 
   @override
@@ -156,6 +172,16 @@ class _SignToTextScreenState extends State<SignToTextScreen>
                   controller: TextEditingController(text: translatedText),
                 ),
                 SizedBox(height: 16),
+                SizedBox(
+                  width: double
+                      .infinity, // Hacer que el botón ocupe todo el ancho disponible
+                  child: FloatingActionButton.extended(
+                    onPressed: speakText,
+                    label: Text('Reproducir'),
+                    icon: Icon(Icons
+                        .play_arrow), // Cambiar el ícono a un reproductor de audio
+                  ),
+                ),
               ],
             ),
           ),
@@ -172,7 +198,7 @@ class _SignToTextScreenState extends State<SignToTextScreen>
                 ElevatedButton(
                   onPressed: clearText,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Colors.white,
                     iconColor: Colors.white,
                   ),
                   child: Text('Limpiar'),
@@ -182,10 +208,6 @@ class _SignToTextScreenState extends State<SignToTextScreen>
           ),
           SizedBox(height: 16),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: translateSignLanguage,
-        child: Icon(Icons.mic),
       ),
     );
   }
