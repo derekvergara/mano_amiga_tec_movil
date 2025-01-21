@@ -29,18 +29,13 @@ class _SignToTextScreenState extends State<SignToTextScreen>
       enableAudio: false,
     );
 
-    // Escucha los cambios en la orientación del dispositivo
-    _cameraController.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-
     try {
       await _cameraController.initialize();
-      setState(() {
-        isCameraInitialized = true;
-      });
+      if (mounted) {
+        setState(() {
+          isCameraInitialized = true;
+        });
+      }
     } catch (e) {
       print('Error al inicializar la cámara: $e');
     }
@@ -88,7 +83,7 @@ class _SignToTextScreenState extends State<SignToTextScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Traductor IA',
+          'Nuevo Traductor IA', // Cambia el texto aquí
           style: TextStyle(
               fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
         ),
@@ -102,13 +97,32 @@ class _SignToTextScreenState extends State<SignToTextScreen>
       ),
       body: Column(
         children: [
-          // Vista de la cámara con orientación dinámica
+          // Vista de la cámara ajustada para orientación vertical con borde
           Expanded(
             flex: 3,
             child: isCameraInitialized
-                ? AspectRatio(
-                    aspectRatio: _cameraController.value.aspectRatio,
-                    child: CameraPreview(_cameraController),
+                ? Padding(
+                    padding: const EdgeInsets.all(
+                        3.0), // Borde alrededor de la cámara
+                    child: ClipRect(
+                      child: Transform.rotate(
+                        angle:
+                            90 * (3.1415926535897932 / 180), // Rotar 90 grados
+                        child: OverflowBox(
+                          alignment: Alignment.center,
+                          child: FittedBox(
+                            fit: BoxFit.contain,
+                            child: Container(
+                              width:
+                                  300, // Cambia este valor para ajustar el ancho
+                              height:
+                                  250, // Cambia este valor para ajustar el alto
+                              child: CameraPreview(_cameraController),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   )
                 : Center(
                     child: Icon(
