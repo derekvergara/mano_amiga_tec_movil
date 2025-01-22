@@ -128,7 +128,7 @@ class _SignToTextScreenState extends State<SignToTextScreen>
                           alignment: Alignment.center,
                           child: FittedBox(
                             fit: BoxFit.contain,
-                            child: Container(
+                            child: SizedBox(
                               width:
                                   300, // Cambia este valor para ajustar el ancho
                               height:
