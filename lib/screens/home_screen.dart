@@ -8,6 +8,8 @@ import 'texttosigns_screen.dart';
 import 'history_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   Future<void> _start(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false); // Elimina el estado de sesión

@@ -4,6 +4,8 @@ import 'register_screen.dart'; // Nueva pantalla para el registro
 import 'home_screen.dart';
 
 class StartScreen extends StatelessWidget {
+  const StartScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class TextToSignScreen extends StatefulWidget {
+  const TextToSignScreen({super.key});
+
   @override
   _TextToSignScreenState createState() => _TextToSignScreenState();
 }
