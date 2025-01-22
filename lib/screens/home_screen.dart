@@ -4,10 +4,10 @@ import 'start_screen.dart';
 import 'settings_screen.dart';
 import 'alphabet_screen.dart';
 import 'signstotext_screen.dart';
+import 'texttosigns_screen.dart';
+import 'history_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
   Future<void> _start(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false); // Elimina el estado de sesión
@@ -42,7 +42,14 @@ class HomeScreen extends StatelessWidget {
         children: [
           // Fondo
           Container(
-            color: Colors.white,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue, Colors.purple],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
           ),
 
           // Contenido principal centrado
@@ -95,6 +102,10 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () {
                       // Función para el botón "Texto a señas"
                       print("Botón 'Texto a señas' presionado");
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TextToSignScreen()));
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(20),
@@ -129,6 +140,11 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () {
                       // Función para el botón "Historial"
                       print("Botón 'Historial' presionado");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HistoryScreen()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(20),
@@ -196,9 +212,9 @@ class HomeScreen extends StatelessWidget {
                   // Logo de la app
                   Positioned(
                     child: CircleAvatar(
-                      radius: 140,
+                      radius: 120,
                       backgroundImage: AssetImage(
-                          'assets/images/logo.png'), // Cambiar al logo que desees
+                          'assets/images/logo_circular.png'), // Cambiar al logo que desees
                     ),
                   ),
                 ],

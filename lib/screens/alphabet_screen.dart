@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'settings_screen.dart';
+import 'home_screen.dart';
 
 class AlphabetScreen extends StatelessWidget {
   final String title;
 
-  const AlphabetScreen({super.key, required this.title});
+  const AlphabetScreen({Key? key, required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, // Elimina el botón de "Back"
         title: Text(
-          "Abecedario",
+          "ABECEDARIO",
           style: TextStyle(
               fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
         ),
@@ -151,19 +153,13 @@ class AlphabetScreen extends StatelessWidget {
                     child: IconButton(
                       icon: Icon(
                         Icons.book,
+                        color: Colors.lightBlue,
                         size: 40,
                       ),
                       onPressed: () {
                         // Acción para el botón del libro
                         // Navega a la vista AlphabetScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AlphabetScreen(
-                              title: "Abecedario",
-                            ),
-                          ),
-                        );
+
                         print("Abecedario presionado");
                       },
                     ),
@@ -171,11 +167,16 @@ class AlphabetScreen extends StatelessWidget {
                   IconButton(
                     icon: Icon(
                       Icons.home,
-                      color: Colors.lightBlue,
                       size: 40,
                     ),
                     onPressed: () {
                       // Acción para el botón de la casa
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(),
+                        ),
+                      );
                       print("Casa presionada");
                     },
                   ),

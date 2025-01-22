@@ -2,50 +2,74 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
 import '../services/usuario_service.dart';
-import '../models/usuario.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final UsuarioService _usuarioService = UsuarioService();
+  late AnimationController _animationController;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Configurar el controlador para la animación del fondo
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat(reverse: true);
+
+    // Configurar el gradiente animado
+    _colorAnimation = ColorTween(
+      begin: Colors.blue.shade100,
+      end: Colors.purple.shade100,
+    ).animate(_animationController);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void _login() async {
-    final username = _usernameController.text;
-    final password = _passwordController.text;
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (username.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Por favor, completa todos los campos")),
+      );
+      return;
+    }
 
     try {
-      List<Usuario> usuarios = await _usuarioService.obtenerUsuarios();
+      final success = await _usuarioService.login(username, password);
 
-      // Verifica si las credenciales existen en la lista de usuarios
-      final usuarioValido = usuarios.any((usuario) =>
-          usuario.username == username && usuario.password == password);
-
-      if (usuarioValido) {
-        // Guardar estado de sesión
+      if (success) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
 
-        // Redirigir a la página principal
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen()),
         );
-        Navigator.pushReplacementNamed(context, '/home');
       } else {
-        // Credenciales incorrectas
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Credenciales incorrectas")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Usuario o contraseña incorrectos")),
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error al conectarse al servidor")));
+        SnackBar(content: Text("Error al conectar con el servidor: $e")),
+      );
     }
   }
 
@@ -54,16 +78,29 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Login"),
-        backgroundColor:
-            const Color.fromARGB(255, 0, 0, 0), // Fondo transparente
-        elevation: 0, // Sin sombra
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        elevation: 0,
         toolbarHeight: 0.0,
       ),
       body: Stack(
         children: [
-          // Fondo blanco
-          Container(
-            color: Colors.white,
+          // Fondo animado (dentro del contenedor original)
+          AnimatedBuilder(
+            animation: _colorAnimation,
+            builder: (context, child) {
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      _colorAnimation.value ?? Colors.blue.shade100,
+                      Colors.white,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              );
+            },
           ),
 
           // Círculo en la parte inferior menos color
@@ -126,12 +163,11 @@ class _LoginScreenState extends State<LoginScreen> {
             left: 180,
             child: CircleAvatar(
               radius: 100,
-              backgroundImage: AssetImage(
-                  'assets/images/logo.png'), // Cambiar al logo que desees
+              backgroundImage: AssetImage('assets/images/logo.png'),
             ),
           ),
 
-          // Letras de iniciar sesion en la parte superior izquierda
+          // Letras de iniciar sesión en la parte superior izquierda
           Positioned(
             top: 50,
             left: 20,
@@ -158,9 +194,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _usernameController,
                       decoration: InputDecoration(labelText: "Usuario"),
                       style: TextStyle(
-                        color: const Color.fromARGB(
-                            255, 0, 0, 0), // Cambia el color del texto
-                        fontSize: 18, // Cambia el tamaño de la letra
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -171,27 +206,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(labelText: "Contraseña"),
                       obscureText: true,
                       style: TextStyle(
-                        color: const Color.fromARGB(
-                            255, 0, 0, 0), // Cambia el color del texto
-                        fontSize: 18, // Cambia el tamaño de la letra
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        fontSize: 18,
                       ),
                     ),
                   ),
                   SizedBox(height: 30),
-                  // Configuracion del boton
                   ElevatedButton(
                     onPressed: _login,
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 13), // Tamaño del botón
-                        side: BorderSide(color: Colors.blueAccent, width: 1)),
+                      backgroundColor: Colors.white,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+                      side: BorderSide(color: Colors.blueAccent, width: 1),
+                    ),
                     child: Text(
                       "Iniciar Sesión",
                       style: TextStyle(
-                        fontSize: 20, // Tamaño de la letra
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent, // Color de la letra
+                        color: Colors.blueAccent,
                       ),
                     ),
                   ),
