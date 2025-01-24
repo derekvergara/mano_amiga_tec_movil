@@ -31,7 +31,7 @@ class _SignToTextScreenState extends State<SignToTextScreen>
     cameras = await availableCameras();
     _cameraController = CameraController(
       cameras[selectedCameraIndex],
-      ResolutionPreset.medium,
+      ResolutionPreset.high,
       enableAudio: false,
     );
 
@@ -82,10 +82,50 @@ class _SignToTextScreenState extends State<SignToTextScreen>
     }
   }
 
+  Widget _rearCameraView() {
+    // Lógica específica para la cámara trasera
+    return Transform.rotate(
+      angle: math.pi / 2, // Rotación de 90 grados
+      child: CameraPreview(_cameraController),
+    );
+  }
+
+  Widget _frontCameraView() {
+    // Lógica específica para la cámara frontal
+    return Transform(
+      alignment: Alignment.center,
+      transform: Matrix4.rotationY(math.pi), // Efecto espejo
+      child: Transform.rotate(
+        angle: -math.pi /
+            2, // Ajuste para que la cámara frontal quede correctamente orientada
+        child: CameraPreview(_cameraController),
+      ),
+    );
+  }
+
+  Widget _cameraView() {
+    // Seleccionar la vista dependiendo de la cámara
+    return cameras[selectedCameraIndex].lensDirection ==
+            CameraLensDirection.front
+        ? _frontCameraView()
+        : _rearCameraView();
+  }
+
   void speakText() {
     if (translatedText.isNotEmpty) {
       flutterTts.speak(translatedText);
     }
+  }
+
+  void saveTranslation() {
+    // Lógica para guardar la traducción (implementar según sea necesario)
+    print("Guardado: $translatedText");
+  }
+
+  void clearTranslation() {
+    setState(() {
+      translatedText = "";
+    });
   }
 
   @override
@@ -107,23 +147,15 @@ class _SignToTextScreenState extends State<SignToTextScreen>
       ),
       body: Column(
         children: [
-          // Detectar orientación del dispositivo
-          Expanded(
-            flex: 3,
+          // Vista de la cámara con tamaño fijo
+          SizedBox(
+            height: 370, // Altura fija
+            width: 350, // Ancho fijo
             child: isCameraInitialized
                 ? Padding(
                     padding: const EdgeInsets.all(3.0),
                     child: ClipRect(
-                      child: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.rotationY(
-                          cameras[selectedCameraIndex].lensDirection ==
-                                  CameraLensDirection.front
-                              ? math.pi
-                              : 0,
-                        ),
-                        child: CameraPreview(_cameraController),
-                      ),
+                      child: _cameraView(), // Selecciona la vista correcta
                     ),
                   )
                 : Center(
@@ -144,6 +176,7 @@ class _SignToTextScreenState extends State<SignToTextScreen>
               label: Text('Cambiar cámara'),
             ),
           ),
+
           // Campo de texto para traducción
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -168,13 +201,32 @@ class _SignToTextScreenState extends State<SignToTextScreen>
                   controller: TextEditingController(text: translatedText),
                 ),
                 SizedBox(height: 16),
+
+                // Botón de reproducir
                 SizedBox(
                   width: double.infinity,
                   child: FloatingActionButton.extended(
                     onPressed: speakText,
                     label: Text('Reproducir'),
-                    icon: Icon(Icons.play_arrow),
+                    icon: Icon(Icons.volume_up_rounded), // Ícono llamativo
+                    backgroundColor: Colors.blueAccent, // Color llamativo
                   ),
+                ),
+                SizedBox(height: 16),
+
+                // Botones de guardar y limpiar
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: saveTranslation,
+                      child: Text('Guardar'),
+                    ),
+                    ElevatedButton(
+                      onPressed: clearTranslation,
+                      child: Text('Limpiar'),
+                    ),
+                  ],
                 ),
               ],
             ),
