@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^0.13.4  # Para enviar peticiones HTTP a la API de Flask
   http: ^1.0.0
   flutter_spinkit: ^5.2.0
   native_device_orientation: ^1.1.1
