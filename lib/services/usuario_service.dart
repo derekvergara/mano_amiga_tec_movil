@@ -4,11 +4,9 @@ import '../models/usuario.dart';
 
 class UsuarioService {
   //final String baseUrl = "https://creative-joy-production.up.railway.app/api/usuario/listado";
-  //final String baseUrl = "http://192.168.18.240:8080/api/usuario"; // URL para conectar con el móvil localmente
   final String baseUrl =
-      "http://192.168.52.23:8080/api"; // URL para conectar con el móvil localmente
+      "http://192.168.18.240:8080/api/usuario"; // URL para conecta con el movil localmente
 
-  // Método para obtener la lista de usuarios
   Future<List<Usuario>> obtenerUsuarios() async {
     final url = Uri.parse("$baseUrl/listado");
     final response = await http.get(url);
@@ -21,75 +19,84 @@ class UsuarioService {
     }
   }
 
-  Future<Usuario?> login(String username, String password) async {
+  // Método para iniciar sesión
+  Future<bool> login(String username, String password) async {
     final url = Uri.parse("$baseUrl/login");
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'usuario': username, 'pasword': password}),
-    );
+    try {
+      print("Enviando solicitud POST a $url con:");
+      print({"username": username, "password": password});
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'username': username, 'password': password}),
+      );
 
-      if (data['success'] == true) {
-        // Devuelve un objeto Usuario con los datos del backend
-        return Usuario(
-          id: data['id'],
-          usuario: username,
-          password: password,
-          nombre: data['nombre'] ?? "",
-          edad: 0, // No devuelto por el backend, se puede ajustar
-          telefono: data['telefono'] ?? "",
-          correo: data['correo'] ?? "",
-          carnetDiscapacidad: false, // Ajustar según el backend si es necesario
-          porcentajeDeDiscapacidad:
-              0, // Ajustar según el backend si es necesario
-          numeroCarnet: "", // Ajustar según el backend si es necesario
-        );
+      print("Estado de respuesta: ${response.statusCode}");
+      print("Cuerpo de respuesta: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        print("Respuesta exitosa: $responseData");
+        return responseData['success'] ?? false;
+      } else if (response.statusCode == 401) {
+        print("Credenciales incorrectas");
+        return false;
+      } else {
+        print("Error en el servidor: ${response.statusCode}");
+        throw Exception("Error en el servidor: ${response.statusCode}");
       }
-    } else if (response.statusCode == 401) {
-      return null; // Credenciales incorrectas
-    } else {
-      throw Exception("Error en el servidor: ${response.statusCode}");
+    } catch (e) {
+      print("Error al conectar con el servidor: $e");
+      throw Exception("Error al conectar con el servidor: $e");
     }
   }
 
-  // Método para registrar un usuario
   //static const String _baseUrl ="https://creative-joy-production.up.railway.app/api/usuario";
-  static const String _baseUrl = "http://192.168.52.23:8080/api";
+  static const String _baseUrl = "http://192.168.18.240:8080/api/usuario";
 
-  static Future<bool> registerUser({
-    required String usuario,
-    required String password,
-    required String nombre,
-    required int edad,
-    required String telefono,
-    required String correo,
-    required bool carnetDiscapacidad,
-    int? porcentajeDiscapacidad,
-    String? numeroCarnet,
-  }) async {
-    final url = Uri.parse("$_baseUrl/usuario");
+  /*static Future<bool> register(String username, String password) async {
+    final url = Uri.parse("$_baseUrl/IngresarUsuario");
 
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
       body: json.encode({
-        "usuario": usuario,
-        "pasword": password,
+        "username": username,
+        "password": password,
+      }),
+    );
+
+    return response.statusCode ==
+        201; // Devuelve true si la API responde con éxito
+  }*/
+
+  static Future<bool> registerUser({
+    required String username,
+    required String password,
+    required String nombre,
+    required int edad,
+    required String telefono,
+    required String correo,
+    String? carnet,
+    int? porcentajeDiscapacidad,
+  }) async {
+    final url = Uri.parse("$_baseUrl/IngresarUsuario");
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({
+        "username": username,
+        "password": password,
         "nombre": nombre,
         "edad": edad,
         "telefono": telefono,
         "correo": correo,
-        "carnet_discapacidad": carnetDiscapacidad,
-        "porcentaje_de_discapacidad": porcentajeDiscapacidad,
-        "numero_carnet": numeroCarnet,
+        "carnet": carnet,
+        "porcentaje_discapacidad": porcentajeDiscapacidad,
       }),
     );
-
-    print("Estado de respuesta: ${response.statusCode}");
-    print("Cuerpo de respuesta: ${response.body}");
 
     return response.statusCode == 201; // Devuelve true si se registra con éxito
   }

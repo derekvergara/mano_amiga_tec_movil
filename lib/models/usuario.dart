@@ -1,60 +1,68 @@
+/*class Usuario {
+  final int id;
+  final String username;
+  final String password;
+
+  Usuario({required this.id, required this.username, required this.password});
+
+  factory Usuario.fromJson(Map<String, dynamic> json) {
+    return Usuario(
+      id: json['id'],
+      username: json['username'],
+      password: json['password'],
+    );
+  }
+}*/
+
 class Usuario {
   final int id;
-  final String
-      usuario; // Cambiado de "username" a "usuario" para que coincida con el backend
-  final String
-      password; // Cambiado de "pasword" para corregir el typo del backend
+  final String username;
+  final String password;
   final String nombre;
   final int edad;
   final String telefono;
   final String correo;
-  final bool carnetDiscapacidad; // Para indicar si tiene carnet de discapacidad
-  final int?
-      porcentajeDeDiscapacidad; // Puede ser nulo si no tiene discapacidad
-  final String? numeroCarnet; // Puede ser nulo si no tiene carnet
+  final String? carnet; // Puede ser nulo si no tiene discapacidad
+  final int? porcentajeDiscapacidad; // Puede ser nulo si no tiene discapacidad
 
   Usuario({
     required this.id,
-    required this.usuario,
+    required this.username,
     required this.password,
     required this.nombre,
     required this.edad,
     required this.telefono,
     required this.correo,
-    required this.carnetDiscapacidad,
-    this.porcentajeDeDiscapacidad,
-    this.numeroCarnet,
+    this.carnet,
+    this.porcentajeDiscapacidad,
   });
 
-  // Crear un objeto Usuario a partir de un JSON
   factory Usuario.fromJson(Map<String, dynamic> json) {
     return Usuario(
       id: json['id'],
-      usuario: json['usuario'],
-      password: json['pasword'],
+      username: json['username'],
+      password: json['password'],
       nombre: json['nombre'],
       edad: json['edad'],
       telefono: json['telefono'],
       correo: json['correo'],
-      carnetDiscapacidad: json['carnet_discapacidad'],
-      porcentajeDeDiscapacidad: json['porcentaje_de_discapacidad'],
-      numeroCarnet: json['numero_carnet'],
+      carnet: json['carnet'], // Si el valor no está presente, será nulo
+      porcentajeDiscapacidad:
+          json['porcentaje_discapacidad'], // Si no está, será nulo
     );
   }
 
-  // Convertir un objeto Usuario a un JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'usuario': usuario,
-      'pasword': password,
+      'username': username,
+      'password': password,
       'nombre': nombre,
       'edad': edad,
       'telefono': telefono,
       'correo': correo,
-      'carnet_discapacidad': carnetDiscapacidad,
-      'porcentaje_de_discapacidad': porcentajeDeDiscapacidad,
-      'numero_carnet': numeroCarnet,
+      'carnet': carnet,
+      'porcentaje_discapacidad': porcentajeDiscapacidad,
     };
   }
 }

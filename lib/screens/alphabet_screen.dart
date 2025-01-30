@@ -5,7 +5,7 @@ import 'home_screen.dart';
 class AlphabetScreen extends StatelessWidget {
   final String title;
 
-  const AlphabetScreen({Key? key, required this.title}) : super(key: key);
+  const AlphabetScreen({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {

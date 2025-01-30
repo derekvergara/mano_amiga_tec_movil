@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../services/usuario_service.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -31,7 +33,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final carnet = _carnetController.text.trim();
     final porcentajeDiscapacidad =
         int.tryParse(_porcentajeController.text.trim()) ?? 0;
-    final carnetDiscapacidad = _discapacidad == "Sí";
 
     if (username.isNotEmpty &&
         password.isNotEmpty &&
@@ -42,16 +43,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         (!_mostrarCamposDiscapacidad ||
             (carnet.isNotEmpty && porcentajeDiscapacidad > 0))) {
       final success = await UsuarioService.registerUser(
-        usuario: username,
+        username: username,
         password: password,
         nombre: nombre,
         edad: edad,
         telefono: telefono,
         correo: correo,
-        numeroCarnet: _mostrarCamposDiscapacidad ? carnet : null,
+        carnet: _mostrarCamposDiscapacidad ? carnet : null,
         porcentajeDiscapacidad:
             _mostrarCamposDiscapacidad ? porcentajeDiscapacidad : null,
-        carnetDiscapacidad: carnetDiscapacidad,
       );
 
       if (success) {
