@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'settings_screen.dart';
 import 'home_screen.dart';
 
-// derek es meco
 class AlphabetScreen extends StatelessWidget {
   final String title;
 
