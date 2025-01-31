@@ -5,18 +5,37 @@ import 'home_screen.dart'; // Asegúrate de importar tus pantallas
 import 'alphabet_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
-
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _isDarkMode = false; // Controla el tema Claro/Oscuro
+  String _userName = "Usuario"; // Nombre del usuario por defecto
+  String _userEmail = "invitado@ejemplo.com"; // Correo por defecto
+  String _userNombre = "Invitado";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userName = prefs.getString('userName') ?? "Usuario";
+      _userEmail = prefs.getString('userEmail') ?? "invitado@ejemplo.com";
+      _userNombre = prefs.getString('userNombre') ?? "Invitado";
+    });
+  }
 
   Future<void> _start(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false); // Elimina el estado de sesión
+    await prefs.remove('userName');
+    await prefs.remove('userEmail');
+    await prefs.remove('userNombre');
 
     // Regresa al login
     Navigator.pushReplacement(
@@ -38,13 +57,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(
-              Icons.settings,
+              Icons.edit,
               color: Colors.white,
             ),
             onPressed: () {
               // Acción para el botón de ajustes en el AppBar
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Estás en la pantalla de Ajustes")),
+                SnackBar(content: Text("Muy pronto se habilitara esta opcion")),
               );
             },
           ),
@@ -66,8 +85,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: <Widget>[
                           ListTile(
                             leading: Icon(Icons.person),
-                            title: Text('Usuario 1'),
-                            subtitle: Text('usuario1@gmail.com'),
+                            title: Text(_userNombre), // Nombre del usuario
+                            subtitle: Text(_userEmail), // Correo del usuario
                           ),
                           ElevatedButton(
                             onPressed: () => _start(context),
@@ -202,16 +221,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Acción del botón flotante
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Acción agregada")),
-          );
-        },
-        tooltip: 'Agregar',
-        child: Icon(Icons.add),
       ),
     );
   }

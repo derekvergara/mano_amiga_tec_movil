@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'settings_screen.dart';
 import 'home_screen.dart';
 
-// derek es meco
 class AlphabetScreen extends StatelessWidget {
   final String title;
 
-  const AlphabetScreen({super.key, required this.title});
+  const AlphabetScreen({Key? key, required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

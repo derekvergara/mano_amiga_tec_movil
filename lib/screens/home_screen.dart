@@ -6,10 +6,9 @@ import 'alphabet_screen.dart';
 import 'signstotext_screen.dart';
 import 'texttosigns_screen.dart';
 import 'history_screen.dart';
+import 'games_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
   Future<void> _start(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false); // Elimina el estado de sesión
@@ -181,7 +180,10 @@ class HomeScreen extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       // Función para el botón "Juegos"
-                      // ...
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GamesScreen()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(20),
