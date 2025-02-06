@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:math' as math;
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
+import 'dart:async'; // Importar para usar Timer
+
+Timer? _captureTimer;
 
 class SignToTextScreen extends StatefulWidget {
   const SignToTextScreen({super.key});
@@ -25,6 +31,49 @@ class _SignToTextScreenState extends State<SignToTextScreen>
     WidgetsBinding.instance.addObserver(this);
     initializeCamera();
     _initTts();
+
+    // Iniciar el timer para capturar imágenes cada 2 segundos
+    _captureTimer = Timer.periodic(Duration(seconds: 2), (timer) {
+      if (isCameraInitialized) {
+        captureAndSendImage();
+      }
+    });
+  }
+
+  // Método para capturar imagen, convertirla a base64 y enviar al servidor
+  Future<void> captureAndSendImage() async {
+    if (!_cameraController.value.isInitialized) return;
+
+    try {
+      // Capturar la imagen
+      final XFile imageFile = await _cameraController.takePicture();
+      final bytes = await imageFile.readAsBytes();
+
+      // Convertir la imagen a base64
+      String base64Image = base64Encode(bytes);
+      base64Image =
+          'data:image/jpeg;base64,$base64Image'; // Asegúrate de que el formato coincide con el del backend
+
+      // Enviar la imagen al backend
+      final response = await http.post(
+        Uri.parse(
+            'http://192.168.3.11:5000/predict'), // Cambia esto por tu IP local si estás usando un dispositivo físico
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'image': base64Image}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          translatedText +=
+              data['prediction']; // Añadir la letra detectada al campo de texto
+        });
+      } else {
+        print('Error en la predicción: ${response.body}');
+      }
+    } catch (e) {
+      print('Error al capturar o enviar la imagen: $e');
+    }
   }
 
   Future<void> initializeCamera() async {
@@ -69,6 +118,7 @@ class _SignToTextScreenState extends State<SignToTextScreen>
     WidgetsBinding.instance.removeObserver(this);
     _cameraController.dispose();
     flutterTts.stop();
+    _captureTimer?.cancel(); // Cancelar el timer al cerrar la app
     super.dispose();
   }
 
