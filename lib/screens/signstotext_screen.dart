@@ -108,16 +108,16 @@ class _SignToTextScreenState extends State<SignToTextScreen>
   }
 
   void _initTts() {
-    flutterTts.setLanguage("es-ES");
-    flutterTts.setPitch(1.0);
-    flutterTts.setSpeechRate(0.5);
+    flutterTts.setLanguage("es-ES"); // Idioma español
+    flutterTts.setPitch(1.0); // Tono normal
+    flutterTts.setSpeechRate(0.5); // Velocidad de lectura moderada
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _cameraController.dispose();
-    flutterTts.stop();
+    flutterTts.stop(); // Detener la reproducción de voz
     _captureTimer?.cancel(); // Cancelar el timer al cerrar la app
     super.dispose();
   }
@@ -256,10 +256,11 @@ class _SignToTextScreenState extends State<SignToTextScreen>
                 SizedBox(
                   width: double.infinity,
                   child: FloatingActionButton.extended(
-                    onPressed: speakText,
+                    onPressed:
+                        speakText, // Llama a la función cuando se presiona
                     label: Text('Reproducir'),
-                    icon: Icon(Icons.volume_up_rounded), // Ícono llamativo
-                    backgroundColor: Colors.blueAccent, // Color llamativo
+                    icon: Icon(Icons.volume_up_rounded),
+                    backgroundColor: Colors.blueAccent,
                   ),
                 ),
                 SizedBox(height: 16),
